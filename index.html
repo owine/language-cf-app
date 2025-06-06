@@ -65,38 +65,38 @@
                     <select class="language-select">
                         <option value="">Select Language</option>
                         <option value="original">Original</option>
-                        <option value="ar">Arabic</option>
-                        <option value="bg">Bulgarian</option>
-                        <option value="zh">Chinese</option>
-                        <option value="cs">Czech</option>
-                        <option value="da">Danish</option>
-                        <option value="nl">Dutch</option>
-                        <option value="en">English</option>
-                        <option value="fi">Finnish</option>
-                        <option value="fr">French</option>
-                        <option value="de">German</option>
-                        <option value="el">Greek</option>
-                        <option value="he">Hebrew</option>
-                        <option value="hi">Hindi</option>
-                        <option value="hu">Hungarian</option>
-                        <option value="id">Indonesian</option>
-                        <option value="it">Italian</option>
-                        <option value="ja">Japanese</option>
-                        <option value="ko">Korean</option>
-                        <option value="no">Norwegian</option>
-                        <option value="fa">Persian</option>
-                        <option value="pl">Polish</option>
-                        <option value="pt">Portuguese</option>
-                        <option value="ro">Romanian</option>
-                        <option value="ru">Russian</option>
-                        <option value="sr">Serbian</option>
-                        <option value="sk">Slovak</option>
-                        <option value="es">Spanish</option>
-                        <option value="sv">Swedish</option>
-                        <option value="th">Thai</option>
-                        <option value="tr">Turkish</option>
-                        <option value="uk">Ukrainian</option>
-                        <option value="vi">Vietnamese</option>
+                        <option value="ara">Arabic</option>
+                        <option value="bul">Bulgarian</option>
+                        <option value="chi">Chinese</option>
+                        <option value="cze">Czech</option>
+                        <option value="dan">Danish</option>
+                        <option value="dut">Dutch</option>
+                        <option value="eng">English</option>
+                        <option value="fin">Finnish</option>
+                        <option value="fre">French</option>
+                        <option value="ger">German</option>
+                        <option value="gre">Greek</option>
+                        <option value="heb">Hebrew</option>
+                        <option value="hin">Hindi</option>
+                        <option value="hun">Hungarian</option>
+                        <option value="ind">Indonesian</option>
+                        <option value="ita">Italian</option>
+                        <option value="jpn">Japanese</option>
+                        <option value="kor">Korean</option>
+                        <option value="nor">Norwegian</option>
+                        <option value="per">Persian</option>
+                        <option value="pol">Polish</option>
+                        <option value="por">Portuguese</option>
+                        <option value="rum">Romanian</option>
+                        <option value="rus">Russian</option>
+                        <option value="srp">Serbian</option>
+                        <option value="slo">Slovak</option>
+                        <option value="spa">Spanish</option>
+                        <option value="swe">Swedish</option>
+                        <option value="tha">Thai</option>
+                        <option value="tur">Turkish</option>
+                        <option value="ukr">Ukrainian</option>
+                        <option value="vie">Vietnamese</option>
                     </select>
                 </div>
             </div>
@@ -117,70 +117,88 @@
 
         function generateFormat() {
             const languages = document.querySelectorAll('.language-item');
+            const selectedLanguages = [];
+            
+            languages.forEach((lang) => {
+                const language = lang.querySelector('select').value;
+                if (language) {
+                    selectedLanguages.push(language);
+                }
+            });
+
+            if (selectedLanguages.length === 0) {
+                document.getElementById('output').textContent = 'Please select at least one language.';
+                return;
+            }
+
             const customFormat = {
                 name: "Language Preference",
                 includeCustomFormatWhenRenaming: false,
                 specifications: []
             };
 
-            languages.forEach((lang, index) => {
-                const language = lang.querySelector('select').value;
-                // Calculate score based on position (reverse order)
-                const score = (languages.length - index) * 100;
-                
-                if (language) {
-                    customFormat.specifications.push({
-                        name: `${getLanguageName(language)}`,
-                        implementation: "LanguageSpecification",
-                        negate: false,
-                        required: false,
-                        fields: {
-                            language: language
-                        },
-                        score: score
-                    });
-                }
+            selectedLanguages.forEach((language, index) => {
+                customFormat.specifications.push({
+                    name: `Language: ${getLanguageName(language)}`,
+                    implementation: "LanguageSpecification",
+                    negate: false,
+                    required: false,
+                    fields: {
+                        value: language
+                    }
+                });
             });
 
+            const output = {
+                customFormat: customFormat,
+                suggestedScoring: {
+                    note: "Add this custom format to your quality profile with the following scores:",
+                    scores: selectedLanguages.map((language, index) => ({
+                        language: getLanguageName(language),
+                        score: (selectedLanguages.length - index) * 10
+                    }))
+                }
+            };
+
             document.getElementById('output').textContent = 
-                JSON.stringify(customFormat, null, 2);
+                JSON.stringify(output, null, 2);
         }
 
         function getLanguageName(code) {
             const languages = {
                 'original': 'Original',
-                'ar': 'Arabic',
-                'bg': 'Bulgarian',
-                'zh': 'Chinese',
-                'cs': 'Czech',
-                'da': 'Danish',
-                'nl': 'Dutch',
-                'en': 'English',
-                'fi': 'Finnish',
-                'fr': 'French',
-                'de': 'German',
-                'el': 'Greek',
-                'he': 'Hebrew',
-                'hi': 'Hindi',
-                'hu': 'Hungarian',
-                'id': 'Indonesian',
-                'it': 'Italian',
-                'ja': 'Japanese',
-                'ko': 'Korean',
-                'no': 'Norwegian',
-                'fa': 'Persian',
-                'pl': 'Polish',
-                'pt': 'Portuguese',
-                'ro': 'Romanian',
-                'ru': 'Russian',
-                'sr': 'Serbian',
-                'sk': 'Slovak',
-                'es': 'Spanish',
-                'sv': 'Swedish',
-                'th': 'Thai',
-                'tr': 'Turkish',
-                'uk': 'Ukrainian',
-                'vi': 'Vietnamese'
+                'ara': 'Arabic',
+                'bul': 'Bulgarian',
+                'chi': 'Chinese',
+                'cze': 'Czech',
+                'dan': 'Danish',
+                'dut': 'Dutch',
+                'eng': 'English',
+                'fin': 'Finnish',
+                'fre': 'French',
+                'ger': 'German',
+                'gre': 'Greek',
+                'heb': 'Hebrew',
+                'hin': 'Hindi',
+                'hun': 'Hungarian',
+                'ind': 'Indonesian',
+                'ita': 'Italian',
+                'jpn': 'Japanese',
+                'kor': 'Korean',
+                'nor': 'Norwegian',
+                'per': 'Persian',
+                'pol': 'Polish',
+                'por': 'Portuguese',
+                'rum': 'Romanian',
+                'rus': 'Russian',
+                'srp': 'Serbian',
+                'slo': 'Slovak',
+                'spa': 'Spanish',
+                'swe': 'Swedish',
+                'tha': 'Thai',
+                'tur': 'Turkish',
+                'ukr': 'Ukrainian',
+                'vie': 'Vietnamese'
             };
             return languages[code] || code;
         }
